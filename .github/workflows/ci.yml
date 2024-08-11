@@ -29,4 +29,4 @@ jobs:
         run: docker build --no-cache -t kadirkenan/hello-world-nodejs:${{ env.VERSION }} .
 
       - name: Push Docker image
-        run: docker push kadirkenan/hello-world-nodejs:${{ env.VERSION }}"
+        run: docker push kadirkenan/hello-world-nodejs:${{ env.VERSION }}
