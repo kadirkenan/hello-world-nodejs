@@ -5,7 +5,7 @@ const server = http.createServer((req, res) => {
     console.log(`Sayfa yenilendi: ${now.toLocaleString()}`);
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello World111\n');
+    res.end('Hello World112131231\n');
 });
 
 const PORT = 3000;
