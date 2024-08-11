@@ -1,3 +1,4 @@
+
 name: Node.js CI
 
 on:
@@ -7,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VERSION: 1.0.0 
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Node.js
@@ -14,8 +18,12 @@ jobs:
       with:
         node-version: '14'
     - run: npm install
-    - run: npm test
+
+    - name: Login to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
     - name: Build Docker image
-      run: docker build -t kadirkenan/hello-world-nodejs:0.0.1 .
+      run: docker build --no-cache -t kadirkenan/hello-world-nodejs:${{ env.VERSION }} .
+
     - name: Push Docker image
-      run: docker push kadirkenan/hello-world-nodejs:0.0.1
+      run: docker push kadirkenan/hello-world-nodejs:${{ env.VERSION }}
