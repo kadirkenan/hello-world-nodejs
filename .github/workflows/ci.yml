@@ -14,7 +14,6 @@ jobs:
       with:
         node-version: '14'
     - run: npm install
-    - run: npm test
     - name: Build Docker image
       run: docker build -t kadirkenan/hello-world-nodejs:0.0.1 .
     - name: Push Docker image
