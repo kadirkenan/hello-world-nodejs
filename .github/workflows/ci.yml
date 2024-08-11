@@ -18,9 +18,11 @@ jobs:
       
       - run: npm install
 
-      - name: Extract version from package.json
-        id: extract_version
-        run: echo "VERSION=$(jq -r '.version' < package.json)" >> $GITHUB_ENV
+      - name: Bump version
+        id: bump_version
+        run: |
+          npm version patch -m "Bump version to %s"
+          echo "VERSION=$(jq -r '.version' < package.json)" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -30,3 +32,9 @@ jobs:
 
       - name: Push Docker image
         run: docker push kadirkenan/hello-world-nodejs:${{ env.VERSION }}
+
+      - name: Push version bump to GitHub
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git push origin main --follow-tags
