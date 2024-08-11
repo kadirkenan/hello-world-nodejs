@@ -23,8 +23,7 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git commit --allow-empty -m "Preparing for version bump"
-          npm version patch --force -m "Bump version to %s"
+          npm version patch --no-git-tag-version
           echo "VERSION=$(jq -r '.version' < package.json)" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
@@ -36,9 +35,8 @@ jobs:
       - name: Push Docker image
         run: docker push kadirkenan/hello-world-nodejs:${{ env.VERSION }}
 
-      - name: Push version bump to GitHub
+      - name: Commit version bump
         run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/kadirkenan/hello-world-nodejs.git
+          git add package.json
+          git commit -m "Bump version to ${{ env.VERSION }}"
           git push origin main --follow-tags
