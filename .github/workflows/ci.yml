@@ -18,6 +18,9 @@ jobs:
       
       - run: npm install
 
+      - name: Clean working directory
+        run: git add . && git commit -m "Temporary commit"
+
       - name: Bump version
         id: bump_version
         run: |
