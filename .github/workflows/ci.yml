@@ -18,9 +18,16 @@ jobs:
       
       - run: npm install
 
-      - name: Extract version from package.json
-        id: extract_version
-        run: echo "VERSION=$(jq -r '.version' < package.json)" >> $GITHUB_ENV
+      - name: Get latest version from Docker Hub
+        run: |
+          export PREVIOUS_VERSION=$(curl -s https://hub.docker.com/v2/repositories/kadirkenan/hello-world-nodejs/tags?page_size=1 | jq -r '.results[0].name')
+          echo "PREVIOUS_VERSION=$PREVIOUS_VERSION" >> $GITHUB_ENV
+
+      - name: Bump version
+        run: |
+          IFS='.' read -r -a version_parts <<< "$PREVIOUS_VERSION"
+          NEW_VERSION="${version_parts[0]}.${version_parts[1]}.$((version_parts[2]+1))"
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -29,4 +36,4 @@ jobs:
         run: docker build --no-cache -t kadirkenan/hello-world-nodejs:${{ env.VERSION }} .
 
       - name: Push Docker image
-        run: docker push kadirkenan/hello-world-nodejs:${{ env.VERSION }}
+        run: docker push kadirkenan/hello-world-nodejs:${{ env.VERSION }}"
